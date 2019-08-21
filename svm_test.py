@@ -31,14 +31,14 @@ data_scaled = min_max_scaler.fit_transform(data)
 classes = pd.read_csv("radiomics.csv", usecols=["class"])
 classes = classes.values.ravel()
 #Transformando em 0 e 1 para os scores
-classes = [c.replace('BENIGN','1') for c in classes]
-classes = [c.replace('MALIGNANT','0') for c in classes]
+classes = [c.replace('BENIGN','0') for c in classes]
+classes = [c.replace('MALIGNANT','1') for c in classes]
 classes = [int(c) for c in classes]
 
-#clf.fit(data_scaled[:4*n_samples//5],classes[:4*n_samples//5])
+clf.fit(data_scaled[:4*n_samples//5],classes[:4*n_samples//5])
 ## 10-fold
 scores = {'AUC': 'roc_auc','ACC': 'accuracy','F1': 'f1','Sensitivity': 'recall','Precision': 'precision','Specificity': make_scorer(specificity_loss_func, greater_is_better=True)}
-results = cross_validate(clf, data_scaled,classes, scoring=scores,cv=10)
+results = cross_validate(clf, data_scaled,classes, scoring=scores,cv=10,return_estimator=True)
 #Calculando a média dos resultados
 AUC = np.average(results['test_AUC'])
 F1 = np.average(results['test_F1'])

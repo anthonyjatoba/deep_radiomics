@@ -34,8 +34,8 @@ data_scaled = min_max_scaler.fit_transform(data)
 classes = pd.read_csv("radiomics.csv", usecols=["class"])
 classes = classes.values.ravel()
 #Transformando em 0 e 1 para os scores
-classes = [c.replace('BENIGN','1') for c in classes]
-classes = [c.replace('MALIGNANT','0') for c in classes]
+classes = [c.replace('BENIGN','0') for c in classes]
+classes = [c.replace('MALIGNANT','1') for c in classes]
 classes = [int(c) for c in classes]
 classes = np.asarray(classes)
 
