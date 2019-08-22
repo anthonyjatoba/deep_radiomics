@@ -35,7 +35,7 @@ class SVM(Problem):
         self.types[:] = Binary(122)
         
         # SVM
-        self.clf = svm.SVC(gamma='scale', probability=True, class_weight='balanced')
+        self.clf = svm.SVC(gamma='scale', probability=False, class_weight='balanced')
         
         # Reading data
         data = pd.read_csv("radiomics.csv", usecols=lambda column: column not in [
