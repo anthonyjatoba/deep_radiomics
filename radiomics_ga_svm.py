@@ -77,4 +77,4 @@ for s in algorithm.result:
   if s.objectives[0] > best_solution.objectives[0]:
     best_solution = s
 
-run_svm("--- Features selected by GA ---", best_solution.variables[0])
+run_svm("--- Features selected by GA --- AUC: " + str(best_solution.objectives[0]), best_solution.variables[0])

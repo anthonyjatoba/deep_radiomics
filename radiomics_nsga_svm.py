@@ -11,6 +11,8 @@ import matplotlib.pylab as plt
 
 from platypus import NSGAII, Problem, Binary
 
+from radiomics_all_svm import run_svm
+
 def specificity_loss_func(y, y_pred):
     tn, fp, fn, tp = confusion_matrix(y, y_pred).ravel()
     return tn/(tn+fp)
@@ -70,6 +72,8 @@ algorithm = NSGAII(SVM(), population_size=10)
 algorithm.run(10)
 
 # Print solution
+for s in algorithm.result:
+      run_svm("--- Features selected by NSGAII --- Sensitivity: " + str(s.objectives[0]) + " || Specificity: " + str(s.objectives[1]), s.variables[0])
 
 fig1 = plt.figure(figsize=[11, 11])
 plt.scatter([s.objectives[0] for s in algorithm.result],

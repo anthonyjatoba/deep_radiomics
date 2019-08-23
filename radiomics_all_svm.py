@@ -38,7 +38,7 @@ def run_svm(method = "--- Baseline ---", features = [True]*122):
       data = data[:, features]
 
       print(method)
-      print("Number of selected features: " + str(data.shape[1]))
+      print("Number of features selected: " + str(data.shape[1]))
 
       classes = pd.read_csv("radiomics.csv", usecols=["class"])
       classes = classes.values.ravel()
@@ -105,4 +105,8 @@ def run_svm(method = "--- Baseline ---", features = [True]*122):
 
       print_results(results)
 
-run_svm()
+def main():
+      run_svm()
+      
+if __name__ == "__main__":
+    main()
