@@ -4,7 +4,7 @@ import matplotlib.pylab as plt
 
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate
-from platypus import NSGAII, Problem, Binary
+from platypus import NSGAII, Problem, Binary, nondominated
 from radiomics_all_svm import specificity_loss_func, read_data, get_model
 
 
@@ -94,16 +94,17 @@ if __name__ == "__main__":
     algorithm = NSGAII(SVM(), population_size=30)
     algorithm.run(100)
 
+    nondominated_results = nondominated(algorithm.result)    
 
     # prints results
     fig1 = plt.figure(figsize=[11, 11])
-    plt.scatter([s.objectives[0] for s in algorithm.result],
-                [s.objectives[1] for s in algorithm.result])
+    plt.scatter([s.objectives[0] for s in nondominated_results],
+                [s.objectives[1] for s in nondominated_results])
     plt.xlim([0, 1.1])
     plt.ylim([0, 1.1])
     plt.xlabel("Sensitivity")
     plt.ylabel("Specificity")
     plt.show()
 
-    calculate_relevancy(algorithm.result, 0, 0.81, 40)
-    calculate_relevancy(algorithm.result, 1, 0.83, 40)
+    calculate_relevancy(nondominated_results, 0, 0.81, 15)
+    calculate_relevancy(nondominated_results, 1, 0.83, 15)
