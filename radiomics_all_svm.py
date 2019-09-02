@@ -29,9 +29,9 @@ def print_summary(results):
           (np.mean(results['auc']) * 100, np.std(results['auc']) * 100))
 
 
-def get_model(kernel='rbf', C=1.0, gamma='scale'):
+def get_model(kernel='rbf', C=1.0, gamma='scale', probability=False):
     model = svm.SVC(kernel=kernel, C=C, gamma=gamma,
-                    probability=True, class_weight='balanced')
+                    probability=probability, class_weight='balanced')
     return model
 
 

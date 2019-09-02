@@ -33,12 +33,11 @@ class SVM(Problem):
 
 
 if __name__ == "__main__":
-    algorithm = NSGAII(SVM(), population_size=10,  archive = [ ])
-    algorithm.run(100)
+    algorithm = NSGAII(SVM(), population_size=10,  archive = [])
+    algorithm.run(1000)
 
     # filter results
-    nondominated_results = nondominated(algorithm.result)
-
+    nondominated_results = nondominated(algorithm.result)    
     # prints results
     fig1 = plt.figure(figsize=[11, 11])
     plt.scatter([s.objectives[0] for s in nondominated_results],
@@ -59,7 +58,7 @@ if __name__ == "__main__":
             solution = s
             features = s.variables[0]
 
-    model = get_model()
+    model = get_model(probability=True)
 
     X, Y = read_data('radiomics.csv')
     results = validate(model, X[:, features], Y)
