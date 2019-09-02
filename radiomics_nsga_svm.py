@@ -1,9 +1,10 @@
+from tqdm import tqdm
 import numpy as np
 import matplotlib.pylab as plt
-
+from collections import OrderedDict
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate
-from platypus import NSGAII, Problem, Binary
+from platypus import NSGAII, Problem, Binary, Hypervolume, calculate, display
 from platypus.core import nondominated
 from radiomics_all_svm import specificity_loss_func, print_summary, read_data, validate, get_model
 
@@ -29,12 +30,33 @@ class SVM(Problem):
 
         solution.objectives[:] = [
             np.mean(results['test_Sensitivity']), np.mean(results['test_Specificity'])]
-        print(solution.objectives)
 
 
 if __name__ == "__main__":
-    algorithm = NSGAII(SVM(), population_size=10,  archive = [])
-    algorithm.run(1000)
+    algorithm = NSGAII(SVM(), population_size=10)
+    generations_amount = 100
+
+    hypervolumes = [0]
+    for i in tqdm(range(generations_amount)):
+        algorithm.step()
+        # Defining structure to pass as parameter to class Hypervolume
+        results =  OrderedDict()
+        results["NSGAII"] = {}
+        results["NSGAII"]["SVM"] = [algorithm.result]
+
+        # calculate the hypervolume indicator
+        hyp = Hypervolume(minimum=[0, 0, 0], maximum=[1, 1, 1])
+        hyp_result = calculate(results, hyp)
+        hypervolume = np.mean(list(hyp_result["NSGAII"]["SVM"]["Hypervolume"]))
+        hypervolumes.append(hypervolume)
+        # display(hipervolume, ndigits=3)
+
+    fig1 = plt.figure(figsize=[11, 11])
+    plt.plot([i for i in range(generations_amount+1)], hypervolumes)
+    plt.xlabel("Hypervolume vs Generations")
+    plt.xlabel("Generations")
+    plt.ylabel("Hypervolume")
+    plt.show()
 
     # filter results
     nondominated_results = nondominated(algorithm.result)    
