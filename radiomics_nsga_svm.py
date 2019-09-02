@@ -1,10 +1,11 @@
+from tqdm import tqdm
 import numpy as np
 import matplotlib.pylab as plt
 
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate
-from platypus import NSGAII, Problem, Binary
-from radiomics_all_svm import specificity_loss_func, print_summary, read_data, validate, get_model
+from platypus import NSGAII, Problem, Binary, Hypervolume, calculate, display
+from radiomics_all_svm import specificity_loss_func, read_data, get_model
 
 
 class SVM(Problem):
@@ -28,29 +29,32 @@ class SVM(Problem):
 
         solution.objectives[:] = [
             np.mean(results['test_Sensitivity']), np.mean(results['test_Specificity'])]
-        print(solution.objectives)
+        #print(solution.objectives)
 
 
 if __name__ == "__main__":
+
+    from collections import OrderedDict
     algorithm = NSGAII(SVM(), population_size=10)
-    algorithm.run(100)
+    generations_amount = 100
 
-    # prints results
+    hypervolumes = [0]
+    for i in tqdm(range(generations_amount)):
+        algorithm.step()
+        # Defining structure to pass as parameter to class Hypervolume
+        results =  OrderedDict()
+        results["NSGAII"] = {}
+        results["NSGAII"]["SVM"] = [algorithm.result]
+
+        # calculate the hypervolume indicator
+        hyp = Hypervolume(minimum=[0, 0, 0], maximum=[1, 1, 1])
+        hyp_result = calculate(results, hyp)
+        hypervolume = np.mean(list(hyp_result["NSGAII"]["SVM"]["Hypervolume"]))
+        hypervolumes.append(hypervolume)
+        # display(hipervolume, ndigits=3)
+
     fig1 = plt.figure(figsize=[11, 11])
-    plt.scatter([s.objectives[0] for s in algorithm.result],
-                [s.objectives[1] for s in algorithm.result])
-    plt.xlim([0, 1.1])
-    plt.ylim([0, 1.1])
-    plt.xlabel("Sensitivity")
-    plt.ylabel("Specificity")
+    plt.plot([i for i in range(generations_amount+1)], hypervolumes)
+    plt.xlabel("Generations")
+    plt.ylabel("Hipervolume")
     plt.show()
-
-    # Selecting some solution
-    solution = algorithm.result[0]
-    features = solution.variables[0]
-
-    model = get_model()
-
-    X, Y = read_data('radiomics.csv')
-    results = validate(model, X[:, features], Y)
-    print_summary(results)
