@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import numpy as np
 import matplotlib.pylab as plt
 from sklearn.metrics import make_scorer
@@ -26,17 +27,22 @@ class SVM(Problem):
         solution.objectives[:] = np.mean(results['test_AUC'])        
         #print(solution.objectives)
 
-
-
 if __name__ == "__main__":
     algorithm = GeneticAlgorithm(SVM(), population_size=10)
     generations = 100
     gen_scores = []
-    for i in range(0,generations):
+    
+    for i in tqdm(range(generations)):
         algorithm.step()
         gen_scores.append(algorithm.fittest.objectives[:])
 
-    
+    # Plotting fitness vs generations
+    plt.figure(figsize=[11, 11])
+    plt.title("Fitness vs Generations")
+    plt.xlabel("Generations")
+    plt.ylabel("Fitness (AUC)")
+    plt.plot(gen_scores)
+    plt.show()
 
     # Selecting the best solution
     best_solution = algorithm.result[0]
@@ -44,12 +50,11 @@ if __name__ == "__main__":
         if s.objectives[0] > best_solution.objectives[0]:
             best_solution = s
 
+    # Evaluating best model
     features = best_solution.variables[0]
 
-    model = get_model()
+    model = get_model(probability=True)
 
     X, Y = read_data('radiomics.csv')
     results = validate(model, X[:, features], Y)
     print_summary(results)
-    plt.plot(gen_scores)
-    plt.show()
