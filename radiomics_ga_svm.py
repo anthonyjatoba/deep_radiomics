@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import pandas as pd
 import numpy as np
 import matplotlib.pylab as plt
 from sklearn.metrics import make_scorer
@@ -28,33 +29,66 @@ class SVM(Problem):
         #print(solution.objectives)
 
 if __name__ == "__main__":
-    algorithm = GeneticAlgorithm(SVM(), population_size=10)
-    generations = 100
-    gen_scores = []
-    
-    for i in tqdm(range(generations)):
-        algorithm.step()
-        gen_scores.append(algorithm.fittest.objectives[:])
-
-    # Plotting fitness vs generations
-    plt.figure(figsize=[11, 11])
-    plt.title("Fitness vs Generations")
-    plt.xlabel("Generations")
-    plt.ylabel("Fitness (AUC)")
-    plt.plot(gen_scores)
-    plt.show()
-
-    # Selecting the best solution
-    best_solution = algorithm.result[0]
-    for s in algorithm.result:
-        if s.objectives[0] > best_solution.objectives[0]:
-            best_solution = s
-
-    # Evaluating best model
-    features = best_solution.variables[0]
-
-    model = get_model(probability=True)
-
+    generations = 5
+    num_iter = 5
+    pop = 5
+    ms = 5
+    lw = 2
+    capsize = 3
+    elw = 0.5
+    gen_scores = [[] for i in range(generations)]
+    gen_std = []
+    gen_mean = []
+    metric_results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
+    x = np.arange(1, generations+1, 1)
     X, Y = read_data('radiomics.csv')
-    results = validate(model, X[:, features], Y)
-    print_summary(results)
+    for i in tqdm(range(num_iter)):
+        #Reset alogirthm each iteration
+        algorithm = GeneticAlgorithm(SVM(), population_size=pop)
+        for j in tqdm(range(generations)):
+            algorithm.step()
+            gen_scores[i].append(algorithm.fittest.objectives[:])
+    
+        best_solution = algorithm.fittest
+        features = best_solution.variables[0]
+        model = get_model(probability=True)
+        result = validate(model, X[:, features], Y, plot=False)
+        
+        results['acc_mean'].append(np.mean(result['acc']))
+        results['acc_std'].append(np.std(result['acc']))
+        results['spec_mean'].append(np.mean(result['spec']))
+        results['spec_std'].append(np.std(result['spec']))
+        results['sens_mean'].append(np.mean(result['sens']))
+        results['sens_std'].append(np.std(result['sens']))
+        results['f1_score_mean'].append(np.mean(result['f1_score']))
+        results['f1_score_std'].append(np.std(result['f1_score']))
+        results['auc_mean'].append(np.mean(result['auc']))
+        results['auc_std'].append(np.std(result['auc']))
+
+
+    gen_std = np.std(gen_scores,axis=0)
+    gen_mean = np.mean(gen_scores,axis=0)
+    # Evaluating best model
+    df = pd.DataFrame(results)
+    df.to_csv('results_ga.csv')
+
+    
+    
+    plt.errorbar(x, np.array(gen_mean), np.array(gen_std),ms=ms, lw=lw, marker="o", capsize=capsize, ecolor="blue", elinewidth=elw, label="AUC")
+    plt.show()
+    # # Plotting fitness vs generations
+    # plt.figure(figsize=[11, 11])
+    # plt.title("Fitness vs Generations")
+
+    # plt.xlabel("Generations")
+    # plt.ylabel("Fitness (AUC)")
+    # plt.plot(gen_scores)
+    # plt.show()
+    # Evaluating best model
+    # features = best_solution.variables[0]
+
+    # model = get_model(probability=True)
+
+    # X, Y = read_data('radiomics.csv')
+    # results = validate(model, X[:, features], Y)
+    # print_summary(results)

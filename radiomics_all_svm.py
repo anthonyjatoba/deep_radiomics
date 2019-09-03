@@ -49,7 +49,7 @@ def read_data(path):
     return X, Y
 
 
-def validate(model, X, Y):
+def validate(model, X, Y, plot = True):
     cv = StratifiedKFold(n_splits=10, shuffle=True)
 
     # Results dict
@@ -83,19 +83,21 @@ def validate(model, X, Y):
         #roc_auc = metrics.auc(fpr, tpr)
         roc_auc = results['auc'][i-1]
         aucs.append(roc_auc)
-        plt.plot(fpr, tpr, lw=2, alpha=0.3,
+        if plot:
+            plt.plot(fpr, tpr, lw=2, alpha=0.3,
                  label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
 
-    mean_tpr = np.mean(tprs, axis=0)
-    mean_auc = metrics.auc(mean_fpr, mean_tpr)
-    plt.plot(mean_fpr, mean_tpr, color='blue',
-             label=r'Mean ROC (AUC = %0.2f )' % (mean_auc), lw=2, alpha=1)
-    plt.xlabel('False Positive Rate')
-    plt.ylabel('True Positive Rate')
-    plt.title('ROC')
-    plt.legend(loc="lower right")
+    if plot:
+      mean_tpr = np.mean(tprs, axis=0)
+      mean_auc = metrics.auc(mean_fpr, mean_tpr)
+      plt.plot(mean_fpr, mean_tpr, color='blue',
+                  label=r'Mean ROC (AUC = %0.2f )' % (mean_auc), lw=2, alpha=1)
+      plt.xlabel('False Positive Rate')
+      plt.ylabel('True Positive Rate')
+      plt.title('ROC')
+      plt.legend(loc="lower right")
 
-    plt.show()
+      plt.show()
 
     return results
 
