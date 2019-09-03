@@ -6,6 +6,7 @@ Students:
 * [Anthony Jatobá](https://github.com/anthonyjatoba/)
 * [Eduardo Moraes](https://github.com/dudummv/)
 * [Igor Theotônio](https://github.com/igortheotonio/)
+* [Vinícius Costa](https://github.com/viniciuscostass/)
 
 ### How to set up the environment for the first time
 
