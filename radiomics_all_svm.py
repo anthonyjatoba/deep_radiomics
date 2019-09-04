@@ -56,10 +56,12 @@ def validate(model, X, Y, plot = True):
     results = {'acc': [], 'spec': [], 'sens': [], 'f1_score': [], 'auc': []}
 
     # Needed for ROC
-    i = 0
-    fig1 = plt.figure(figsize=[11, 11])
-    tprs, aucs = [], []
-    mean_fpr = np.linspace(0, 1, 100)
+    fig1 = 0
+    if plot:
+        i = 0
+        fig1 = plt.figure(figsize=[11, 11])
+        tprs, aucs = [], []
+        mean_fpr = np.linspace(0, 1, 100)
 
     # Cross-validation
     for train, test in cv.split(X, Y):
@@ -76,14 +78,15 @@ def validate(model, X, Y, plot = True):
         results['auc'].append(roc_auc_score(Y[test], predicted_proba[:, 1]))
 
         # Composing ROC curve
-        i += 1
-
-        fpr, tpr, t = metrics.roc_curve(Y[test], predicted_proba[:, 1])
-        tprs.append(interp(mean_fpr, fpr, tpr))
-        #roc_auc = metrics.auc(fpr, tpr)
-        roc_auc = results['auc'][i-1]
-        aucs.append(roc_auc)
         if plot:
+            i += 1
+
+            fpr, tpr, t = metrics.roc_curve(Y[test], predicted_proba[:, 1])
+            tprs.append(interp(mean_fpr, fpr, tpr))
+            #roc_auc = metrics.auc(fpr, tpr)
+            roc_auc = results['auc'][i-1]
+            aucs.append(roc_auc)
+        
             plt.plot(fpr, tpr, lw=2, alpha=0.3,
                  label='ROC fold %d (AUC = %0.2f)' % (i, roc_auc))
 

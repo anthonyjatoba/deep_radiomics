@@ -5,7 +5,7 @@ import matplotlib.pylab as plt
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_validate
 from platypus import GeneticAlgorithm, Problem, Binary
-from radiomics_all_svm import specificity_loss_func, print_summary, read_data, validate, get_model
+from radiomics_all_svm import specificity_loss_func, read_data, validate, get_model
 
 class SVM(Problem):
     def __init__(self):
@@ -29,23 +29,24 @@ class SVM(Problem):
         #print(solution.objectives)
 
 if __name__ == "__main__":
-    generations = 5
-    num_iter = 5
-    pop = 5
-    ms = 5
-    lw = 2
-    capsize = 3
-    elw = 0.5
+    
+    X, Y = read_data('radiomics.csv')
+    
+    num_iter, generations, pop = 5, 5, 5
+        
     gen_scores = [[] for i in range(num_iter)]
     gen_std = []
     gen_mean = []
-    results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
+    
     x = np.arange(1, generations+1, 1)
-    X, Y = read_data('radiomics.csv')
-    for i in tqdm(range(num_iter)):
+    
+    results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
+    
+    for i in range(num_iter):
         #Reset alogirthm each iteration
         algorithm = GeneticAlgorithm(SVM(), population_size=pop)
-        for j in tqdm(range(generations)):
+        
+        for j in tqdm(range(generations), desc="Iteration " + str(i + 1)):
             algorithm.step()
             gen_scores[i].append(algorithm.fittest.objectives[:])
     
@@ -68,14 +69,20 @@ if __name__ == "__main__":
 
     gen_std = np.std(gen_scores,axis=0)
     gen_mean = np.mean(gen_scores,axis=0)
+    
     # Evaluating best model
     df = pd.DataFrame(results)
-    df.to_csv('results_ga.csv')
+    df.to_csv('results/radiomics_ga.csv')
 
-    
-    
-    plt.errorbar(x, np.array(gen_mean), np.array(gen_std),ms=ms, lw=lw, marker="o", capsize=capsize, ecolor="blue", elinewidth=elw, label="AUC")
-    plt.show()
+    ms = 5
+    lw = 2
+    capsize = 3
+    elw = 0.5    
+    plt.errorbar(x, np.array(gen_mean), np.array(gen_std), ms=ms, lw=lw, marker="o", capsize=capsize, ecolor="blue", elinewidth=elw, label="AUC")
+    plt.title("Radiomics - AUC vs Generation")
+    plt.ylabel("AUC")
+    plt.xlabel("Generation")
+    plt.savefig("results/radiomics_ga.pdf", format="pdf")
     # # Plotting fitness vs generations
     # plt.figure(figsize=[11, 11])
     # plt.title("Fitness vs Generations")

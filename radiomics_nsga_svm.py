@@ -34,22 +34,20 @@ class SVM(Problem):
 
 
 if __name__ == "__main__":
-    generations_amount = 10
-    pop= 10 
-    num_iter = 5
-    pop = 5
-    ms = 5
-    lw = 2
-    capsize = 3
-    elw = 0.5
     X, Y = read_data('radiomics.csv')
+    
+    num_iter, generations_amount, pop = 5, 10, 10
+
     hypervolumes = [[] for i in range(num_iter)]
     hypervolumes_std = []
     hypervolumes_mean = []
+    
     results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
-    for i in tqdm(range(num_iter)):
+    
+    for i in range(num_iter):
         algorithm = NSGAII(SVM(), population_size=pop)
-        for j in tqdm(range(generations_amount)):
+        
+        for j in tqdm(range(generations_amount), desc="Iteration " + str(i+1)):
             algorithm.step()
             # Defining structure to pass as parameter to class Hypervolume
             nsga_results =  OrderedDict()
@@ -87,27 +85,31 @@ if __name__ == "__main__":
     gen_std = np.std(hypervolumes,axis=0)
     gen_mean = np.mean(hypervolumes,axis=0)                
     df = pd.DataFrame(results)
-    df.to_csv('results_nsga.csv')
+    df.to_csv('results/radiomics_nsga.csv')
 
     #fig1 = plt.figure(figsize=[11, 11])
     #plt.plot([i for i in range(generations_amount+1)], hypervolumes)
-    plt.xlabel("Hypervolume vs Generations")
-    plt.xlabel("Generations")
+    ms = 5
+    lw = 2
+    capsize = 3
+    elw = 0.5
+    plt.xlabel("Radiomics - Hypervolume vs Generation")
+    plt.xlabel("Generation")
     plt.ylabel("Hypervolume")
     plt.errorbar(range(1,generations_amount+1,1), np.array(gen_mean), np.array(gen_std),ms=ms, lw=lw, marker="o", capsize=capsize, ecolor="blue", elinewidth=elw, label="Hyperv")
-
+    plt.savefig("results/radiomics_nsga.pdf", format="pdf")
     # filter results
-    nondominated_results = nondominated(algorithm.result)    
+    #nondominated_results = nondominated(algorithm.result)    
     # prints results
-    fig1 = plt.figure(figsize=[11, 11])
-    plt.scatter([s.objectives[0] for s in nondominated_results],
-                [s.objectives[1] for s in nondominated_results])
-    plt.xlim([0, 1.1])
-    plt.ylim([0, 1.1])
-    plt.xlabel("Sensitivity")
-    plt.ylabel("Specificity")
-    plt.title("Non dominated results")
-    plt.show()
+    #fig1 = plt.figure(figsize=[11, 11])
+    #plt.scatter([s.objectives[0] for s in nondominated_results],
+                #[s.objectives[1] for s in nondominated_results])
+    #plt.xlim([0, 1.1])
+    #plt.ylim([0, 1.1])
+    #plt.xlabel("Sensitivity")
+    #plt.ylabel("Specificity")
+    #plt.title("Non dominated results")
+    #plt.show()
 
     # Selecting the solution with smallest difference between objectives
     
