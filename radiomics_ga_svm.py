@@ -36,10 +36,10 @@ if __name__ == "__main__":
     lw = 2
     capsize = 3
     elw = 0.5
-    gen_scores = [[] for i in range(generations)]
+    gen_scores = [[] for i in range(num_iter)]
     gen_std = []
     gen_mean = []
-    metric_results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
+    results = {'acc_mean': [],'acc_std': [], 'spec_mean': [], 'spec_std': [], 'sens_mean': [], 'sens_std': [], 'f1_score_mean': [], 'f1_score_std': [], 'auc_mean': [], 'auc_std': []}
     x = np.arange(1, generations+1, 1)
     X, Y = read_data('radiomics.csv')
     for i in tqdm(range(num_iter)):
