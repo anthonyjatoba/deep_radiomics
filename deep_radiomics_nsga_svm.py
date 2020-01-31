@@ -94,4 +94,4 @@ if __name__ == "__main__":
     outfile.close()
                 
     df = pd.DataFrame(results)
-    df.to_csv('results/radiomics_nsga.csv')
+    df.to_csv('results/' + experiment + '.csv')
