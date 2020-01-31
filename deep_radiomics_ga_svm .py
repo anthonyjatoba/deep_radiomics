@@ -11,7 +11,7 @@ import pickle
 class SVM(Problem):
     def __init__(self):
         super(SVM, self).__init__(1, 1)
-        self.X, self.Y = read_data('radiomics.csv')
+        self.X, self.Y = read_data('deep_radiomics.csv')
         self.types[:] = Binary(self.X.shape[1])
         self.model = get_model()
         self.directions[:] = Problem.MAXIMIZE
@@ -30,8 +30,8 @@ class SVM(Problem):
         #print(solution.objectives)
 
 if __name__ == "__main__":
-    experiment='radiomics_ga_svm'
-    X, Y = read_data('radiomics.csv')
+    experiment='deep_radiomics_ga_svm'
+    X, Y = read_data('deep_radiomics.csv')
     
     num_iter, generations, pop = 5, 5, 5
         

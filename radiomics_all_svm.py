@@ -8,8 +8,6 @@ from sklearn.metrics import accuracy_score, roc_auc_score, f1_score, recall_scor
 from sklearn.model_selection import StratifiedKFold
 
 import matplotlib.pylab as plt
-from scipy import interp
-
 
 def specificity_loss_func(y, y_pred):
     tn, fp, fn, tp = confusion_matrix(y, y_pred).ravel()
@@ -82,7 +80,7 @@ def validate(model, X, Y, plot = True):
             i += 1
 
             fpr, tpr, t = metrics.roc_curve(Y[test], predicted_proba[:, 1])
-            tprs.append(interp(mean_fpr, fpr, tpr))
+            tprs.append(np.interp(mean_fpr, fpr, tpr))
             #roc_auc = metrics.auc(fpr, tpr)
             roc_auc = results['auc'][i-1]
             aucs.append(roc_auc)
@@ -106,7 +104,7 @@ def validate(model, X, Y, plot = True):
 
 
 if __name__ == "__main__":
-    model = get_model()
+    model = get_model(probability=True)
     X, Y = read_data("radiomics.csv")
     results = validate(model, X, Y)
     print_summary(results)

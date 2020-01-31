@@ -14,7 +14,7 @@ from radiomics_all_svm import specificity_loss_func, print_summary, read_data, v
 class SVM(Problem):
     def __init__(self):
         super(SVM, self).__init__(1, 2)
-        self.X, self.Y = read_data('radiomics.csv')
+        self.X, self.Y = read_data('deep_radiomics.csv')
         self.types[:] = Binary(self.X.shape[1])
         self.model = get_model()
         self.directions[:] = Problem.MAXIMIZE
@@ -35,8 +35,8 @@ class SVM(Problem):
 
 
 if __name__ == "__main__":
-    experiment = 'radiomics_nsga_svm'
-    X, Y = read_data('radiomics.csv')
+    experiment = 'deep_radiomics_nsga_svm'
+    X, Y = read_data('deep_radiomics.csv')
     
     num_iter, generations_amount, pop = 5, 10, 10
 
