@@ -8,6 +8,10 @@ Students:
 * [Igor Theotônio](https://github.com/igortheotonio/)
 * [Vinícius Costa](https://github.com/viniciuscostass/)
 
+## See the presentation
+
+See a summary of the work on the [Presentation](https://github.com/anthonyjatoba/deep_radiomics/blob/master/Presentation.pdf)
+
 ### How to set up the environment for the first time
 
 Install `pip` and `virtualenv`:
