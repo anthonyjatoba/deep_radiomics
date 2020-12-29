@@ -48,7 +48,7 @@ pexpect==4.7.0
 pickleshare==0.7.5
 Platypus-Opt==1.0.3
 prompt-toolkit==2.0.9
-psutil==5.6.3
+psutil==5.6.6
 ptyprocess==0.6.0
 pycodestyle==2.5.0
 pycparser==2.19
