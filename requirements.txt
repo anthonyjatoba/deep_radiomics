@@ -36,7 +36,7 @@ MarkupSafe==1.1.1
 matplotlib==3.0.3
 mccabe==0.6.1
 mistune==2.0.3
-nbconvert==6.3.0
+nbconvert==6.5.1
 nbformat==4.4.0
 numpy==1.22.0
 numpydoc==0.9.1
