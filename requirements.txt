@@ -38,7 +38,7 @@ mccabe==0.6.1
 mistune==2.0.3
 nbconvert==6.3.0
 nbformat==4.4.0
-numpy==1.21.0
+numpy==1.22.0
 numpydoc==0.9.1
 packaging==19.1
 pandas==0.24.2
